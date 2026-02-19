@@ -1,18 +1,907 @@
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lotto Number Generator</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TubeAI — 유튜브 크리에이터 도우미</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0c10;
+    --sidebar-bg: #0f1218;
+    --card: #13171f;
+    --card-hover: #1a2030;
+    --border: #1e2535;
+    --accent: #ff4d4d;
+    --accent2: #ff8c00;
+    --accent3: #00d4aa;
+    --text: #e8eaf0;
+    --text-dim: #6b7a99;
+    --text-mid: #9aa3bb;
+    --sidebar-w: 260px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: var(--sidebar-w);
+    background: var(--sidebar-bg);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    overflow-y: auto;
+  }
+
+  .logo {
+    padding: 24px 20px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .logo-icon {
+    width: 36px; height: 36px;
+    background: var(--accent);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+
+  .logo-text {
+    font-family: 'Space Mono', monospace;
+    font-weight: 700;
+    font-size: 20px;
+    letter-spacing: -0.5px;
+  }
+
+  .logo-text span { color: var(--accent); }
+
+  .sidebar-section {
+    padding: 16px 12px 8px;
+  }
+
+  .sidebar-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    padding: 0 8px;
+    margin-bottom: 6px;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    color: var(--text-mid);
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.15s;
+    margin-bottom: 2px;
+  }
+
+  .nav-item:hover {
+    background: var(--card);
+    color: var(--text);
+  }
+
+  .nav-item.active {
+    background: rgba(255, 77, 77, 0.12);
+    color: var(--accent);
+  }
+
+  .nav-icon {
+    width: 20px; height: 20px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+
+  .nav-badge {
+    margin-left: auto;
+    background: var(--accent);
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 20px;
+  }
+
+  .sidebar-footer {
+    margin-top: auto;
+    padding: 16px;
+    border-top: 1px solid var(--border);
+  }
+
+  .user-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  .user-card:hover { background: var(--card); }
+
+  .avatar {
+    width: 34px; height: 34px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 14px;
+  }
+
+  .user-info { flex: 1; min-width: 0; }
+  .user-name { font-size: 13px; font-weight: 600; }
+  .user-plan { font-size: 11px; color: var(--text-dim); }
+
+  /* ── MAIN ── */
+  .main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .topbar {
+    padding: 16px 28px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--bg);
+  }
+
+  .page-title {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+  }
+
+  .page-subtitle {
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-top: 2px;
+  }
+
+  .topbar-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .btn {
+    padding: 9px 18px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.15s;
+    font-family: 'Noto Sans KR', sans-serif;
+  }
+
+  .btn-ghost {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-mid);
+  }
+
+  .btn-ghost:hover { border-color: var(--text-dim); color: var(--text); }
+
+  .btn-primary {
+    background: var(--accent);
+    color: white;
+  }
+
+  .btn-primary:hover { background: #ff3333; transform: translateY(-1px); }
+
+  .content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 28px;
+  }
+
+  /* ── CHANNEL INPUT ── */
+  .channel-input-area {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 28px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .channel-input-area::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2), var(--accent3));
+  }
+
+  .channel-input-area h3 {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .channel-input-area p {
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-bottom: 16px;
+  }
+
+  .input-row {
+    display: flex;
+    gap: 10px;
+  }
+
+  .url-input {
+    flex: 1;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 11px 16px;
+    color: var(--text);
+    font-size: 14px;
+    font-family: 'Noto Sans KR', sans-serif;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  .url-input:focus { border-color: var(--accent); }
+  .url-input::placeholder { color: var(--text-dim); }
+
+  /* ── STATS GRID ── */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    transition: all 0.2s;
+    cursor: default;
+  }
+
+  .stat-card:hover {
+    border-color: #2a3347;
+    transform: translateY(-2px);
+  }
+
+  .stat-label {
+    font-size: 12px;
+    color: var(--text-dim);
+    font-weight: 500;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .stat-value {
+    font-size: 28px;
+    font-weight: 900;
+    letter-spacing: -1px;
+    font-family: 'Space Mono', monospace;
+  }
+
+  .stat-change {
+    font-size: 12px;
+    margin-top: 6px;
+    font-weight: 500;
+  }
+
+  .up { color: var(--accent3); }
+  .down { color: var(--accent); }
+
+  /* ── BOTTOM GRID ── */
+  .bottom-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  .panel {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .panel-header {
+    padding: 18px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .panel-title {
+    font-size: 15px;
+    font-weight: 700;
+  }
+
+  .panel-body { padding: 20px; }
+
+  /* ── VIDEO LIST ── */
+  .video-item {
+    display: flex;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+
+  .video-item:last-child { border-bottom: none; }
+  .video-item:hover { opacity: 0.8; }
+
+  .video-thumb {
+    width: 80px; height: 48px;
+    background: var(--bg);
+    border-radius: 6px;
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    border: 1px solid var(--border);
+  }
+
+  .video-info { flex: 1; min-width: 0; }
+
+  .video-title {
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 4px;
+  }
+
+  .video-meta {
+    font-size: 11px;
+    color: var(--text-dim);
+    display: flex;
+    gap: 10px;
+  }
+
+  .video-views {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent3);
+    font-family: 'Space Mono', monospace;
+    align-self: center;
+    flex-shrink: 0;
+  }
+
+  /* ── KEYWORD LIST ── */
+  .keyword-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .keyword-item:last-child { border-bottom: none; }
+
+  .kw-rank {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    width: 20px;
+    flex-shrink: 0;
+  }
+
+  .kw-bar-wrap {
+    flex: 1;
+    height: 6px;
+    background: var(--bg);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .kw-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 3px;
+    transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .kw-word {
+    font-size: 13px;
+    font-weight: 600;
+    width: 80px;
+    flex-shrink: 0;
+  }
+
+  .kw-score {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    color: var(--accent2);
+    width: 40px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  /* ── AI CHAT ── */
+  .ai-input-area {
+    position: fixed;
+    bottom: 24px;
+    right: 28px;
+    width: 340px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+    transform: translateY(calc(100% + 24px));
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .ai-input-area.open { transform: translateY(0); }
+
+  .ai-chat-header {
+    padding: 14px 16px;
+    background: linear-gradient(135deg, rgba(255,77,77,0.15), rgba(255,140,0,0.08));
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .ai-chat-header h4 { font-size: 14px; font-weight: 700; }
+
+  .ai-messages {
+    padding: 16px;
+    height: 200px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .msg {
+    max-width: 85%;
+    padding: 8px 12px;
+    border-radius: 10px;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .msg-ai {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    align-self: flex-start;
+  }
+
+  .msg-user {
+    background: rgba(255, 77, 77, 0.2);
+    border: 1px solid rgba(255, 77, 77, 0.3);
+    align-self: flex-end;
+  }
+
+  .ai-input-row {
+    padding: 12px;
+    display: flex;
+    gap: 8px;
+    border-top: 1px solid var(--border);
+  }
+
+  .ai-text-input {
+    flex: 1;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 12px;
+    color: var(--text);
+    font-size: 13px;
+    font-family: 'Noto Sans KR', sans-serif;
+    outline: none;
+  }
+
+  .ai-text-input:focus { border-color: var(--accent); }
+
+  .ai-fab {
+    position: fixed;
+    bottom: 24px;
+    right: 28px;
+    width: 52px; height: 52px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 22px;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 8px 24px rgba(255, 77, 77, 0.4);
+    transition: all 0.2s;
+    z-index: 100;
+  }
+
+  .ai-fab:hover { transform: scale(1.08); }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .stat-card { animation: fadeUp 0.4s ease both; }
+  .stat-card:nth-child(1) { animation-delay: 0.05s; }
+  .stat-card:nth-child(2) { animation-delay: 0.1s; }
+  .stat-card:nth-child(3) { animation-delay: 0.15s; }
+  .stat-card:nth-child(4) { animation-delay: 0.2s; }
+
+  .tag {
+    display: inline-flex; align-items: center;
+    background: rgba(0, 212, 170, 0.12);
+    color: var(--accent3);
+    border: 1px solid rgba(0, 212, 170, 0.25);
+    border-radius: 20px;
+    padding: 3px 10px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+
+  .dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 4px;
+  }
+
+  .dot-red { background: var(--accent); }
+  .dot-green { background: var(--accent3); }
+  .dot-orange { background: var(--accent2); }
+</style>
 </head>
 <body>
-    <div class="container">
-        <h1>Lotto Number Generator</h1>
-        <div id="numbers" class="numbers-container"></div>
-        <button id="generate-btn">Generate Numbers</button>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="logo">
+    <div class="logo-icon">▶</div>
+    <div class="logo-text">Tube<span>AI</span></div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-label">분석 도구</div>
+    <div class="nav-item" onclick="setActive(this, '채널 분석')">
+      <div class="nav-icon">📊</div>
+      <span>채널 분석</span>
     </div>
-    <script src="main.js"></script>
+    <div class="nav-item" onclick="setActive(this, '키워드 분석')">
+      <div class="nav-icon">🔍</div>
+      <span>키워드 분석</span>
+    </div>
+    <div class="nav-item" onclick="setActive(this, '떡상 영상 분석')">
+      <div class="nav-icon">🚀</div>
+      <span>떡상 영상 분석</span>
+      <span class="nav-badge">HOT</span>
+    </div>
+    <div class="nav-item" onclick="setActive(this, '댓글 민심 분석')">
+      <div class="nav-icon">💬</div>
+      <span>댓글 민심 분석</span>
+    </div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-label">제작 도구</div>
+    <div class="nav-item" onclick="setActive(this, '스크립트 생성')">
+      <div class="nav-icon">✍️</div>
+      <span>스크립트 생성</span>
+    </div>
+    <div class="nav-item" onclick="setActive(this, '썸네일 아이디어')">
+      <div class="nav-icon">🖼️</div>
+      <span>썸네일 아이디어</span>
+    </div>
+    <div class="nav-item" onclick="setActive(this, '제목 최적화')">
+      <div class="nav-icon">🏷️</div>
+      <span>제목 최적화</span>
+    </div>
+    <div class="nav-item" onclick="setActive(this, '해시태그 추천')">
+      <div class="nav-icon">🔖</div>
+      <span>해시태그 추천</span>
+    </div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-label">기타</div>
+    <div class="nav-item" onclick="setActive(this, '공지사항')">
+      <div class="nav-icon">📢</div>
+      <span>공지사항</span>
+    </div>
+    <div class="nav-item" onclick="setActive(this, '사용 가이드')">
+      <div class="nav-icon">📖</div>
+      <span>사용 가이드</span>
+    </div>
+    <div class="nav-item" onclick="setActive(this, '필독 사항')">
+      <div class="nav-icon">⚠️</div>
+      <span>필독 사항 (API 할당)</span>
+    </div>
+    <div class="nav-item" onclick="setActive(this, '유튜브비법서')">
+      <div class="nav-icon">💰</div>
+      <span>유튜브비법서 신청</span>
+    </div>
+  </div>
+
+  <div class="sidebar-footer">
+    <div class="user-card">
+      <div class="avatar">나</div>
+      <div class="user-info">
+        <div class="user-name">크리에이터</div>
+        <div class="user-plan">PRO 플랜 사용 중</div>
+      </div>
+      <span style="color: var(--text-dim); font-size: 18px;">⚙</span>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div>
+      <div class="page-title" id="pageTitle">📊 채널 분석</div>
+      <div class="page-subtitle">채널 성장 현황과 핵심 지표를 한눈에 확인하세요</div>
+    </div>
+    <div class="topbar-actions">
+      <button class="btn btn-ghost">📥 내보내기</button>
+      <button class="btn btn-primary">+ 새 분석 시작</button>
+    </div>
+  </div>
+
+  <div class="content">
+    <!-- CHANNEL INPUT -->
+    <div class="channel-input-area">
+      <h3>채널 URL 입력</h3>
+      <p>분석할 유튜브 채널 URL을 입력하면 AI가 자동으로 분석합니다</p>
+      <div class="input-row">
+        <input class="url-input" type="text" placeholder="https://www.youtube.com/@채널명" id="channelUrl" />
+        <button class="btn btn-primary" onclick="analyze()">🔍 분석 시작</button>
+      </div>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label"><span class="dot dot-red"></span>구독자 수</div>
+        <div class="stat-value" style="color: #ff6b6b;">24.7K</div>
+        <div class="stat-change up">▲ 1,230 지난달 대비</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label"><span class="dot dot-green"></span>평균 조회수</div>
+        <div class="stat-value" style="color: var(--accent3);">8.2K</div>
+        <div class="stat-change up">▲ 12.4% 상승</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label"><span class="dot dot-orange"></span>평균 시청 지속률</div>
+        <div class="stat-value" style="color: var(--accent2);">43%</div>
+        <div class="stat-change down">▼ 2.1% 소폭 하락</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label"><span class="dot dot-red"></span>이번 달 업로드</div>
+        <div class="stat-value" style="color: #a78bfa;">12</div>
+        <div class="stat-change up">▲ 목표 달성 120%</div>
+      </div>
+    </div>
+
+    <!-- BOTTOM PANELS -->
+    <div class="bottom-grid">
+      <!-- TOP VIDEOS -->
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">🏆 인기 영상 TOP 5</span>
+          <span class="tag">이번 달</span>
+        </div>
+        <div class="panel-body">
+          <div class="video-item">
+            <div class="video-thumb">🎮</div>
+            <div class="video-info">
+              <div class="video-title">AI로 유튜브 자동화하는 법 (완전 공개)</div>
+              <div class="video-meta"><span>3일 전</span><span>좋아요 428</span></div>
+            </div>
+            <div class="video-views">47.2K</div>
+          </div>
+          <div class="video-item">
+            <div class="video-thumb">💡</div>
+            <div class="video-info">
+              <div class="video-title">조회수 폭발하는 썸네일 만드는 공식</div>
+              <div class="video-meta"><span>1주 전</span><span>좋아요 312</span></div>
+            </div>
+            <div class="video-views">31.8K</div>
+          </div>
+          <div class="video-item">
+            <div class="video-thumb">📱</div>
+            <div class="video-info">
+              <div class="video-title">숏츠 알고리즘 완전 분석 2025년 최신</div>
+              <div class="video-meta"><span>2주 전</span><span>좋아요 289</span></div>
+            </div>
+            <div class="video-views">28.4K</div>
+          </div>
+          <div class="video-item">
+            <div class="video-thumb">🎯</div>
+            <div class="video-info">
+              <div class="video-title">키워드 하나로 구독자 1000명 늘리기</div>
+              <div class="video-meta"><span>3주 전</span><span>좋아요 201</span></div>
+            </div>
+            <div class="video-views">19.1K</div>
+          </div>
+          <div class="video-item">
+            <div class="video-thumb">🔥</div>
+            <div class="video-info">
+              <div class="video-title">유튜버 수익화 현실 솔직하게 말함</div>
+              <div class="video-meta"><span>1달 전</span><span>좋아요 175</span></div>
+            </div>
+            <div class="video-views">14.7K</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- KEYWORDS -->
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">🔑 인기 키워드 분석</span>
+          <span class="tag">AI 추천</span>
+        </div>
+        <div class="panel-body">
+          <div class="keyword-item">
+            <div class="kw-rank">#1</div>
+            <div class="kw-word">유튜브 AI</div>
+            <div class="kw-bar-wrap"><div class="kw-bar" style="width:92%"></div></div>
+            <div class="kw-score">92</div>
+          </div>
+          <div class="keyword-item">
+            <div class="kw-rank">#2</div>
+            <div class="kw-word">썸네일 공식</div>
+            <div class="kw-bar-wrap"><div class="kw-bar" style="width:78%"></div></div>
+            <div class="kw-score">78</div>
+          </div>
+          <div class="keyword-item">
+            <div class="kw-rank">#3</div>
+            <div class="kw-word">알고리즘</div>
+            <div class="kw-bar-wrap"><div class="kw-bar" style="width:71%"></div></div>
+            <div class="kw-score">71</div>
+          </div>
+          <div class="keyword-item">
+            <div class="kw-rank">#4</div>
+            <div class="kw-word">숏츠 전략</div>
+            <div class="kw-bar-wrap"><div class="kw-bar" style="width:65%"></div></div>
+            <div class="kw-score">65</div>
+          </div>
+          <div class="keyword-item">
+            <div class="kw-rank">#5</div>
+            <div class="kw-word">수익화 팁</div>
+            <div class="kw-bar-wrap"><div class="kw-bar" style="width:58%"></div></div>
+            <div class="kw-score">58</div>
+          </div>
+          <div class="keyword-item">
+            <div class="kw-rank">#6</div>
+            <div class="kw-word">크리에이터</div>
+            <div class="kw-bar-wrap"><div class="kw-bar" style="width:49%"></div></div>
+            <div class="kw-score">49</div>
+          </div>
+          <div class="keyword-item">
+            <div class="kw-rank">#7</div>
+            <div class="kw-word">영상 편집</div>
+            <div class="kw-bar-wrap"><div class="kw-bar" style="width:42%"></div></div>
+            <div class="kw-score">42</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- AI CHAT FAB -->
+<button class="ai-fab" id="aiFab" onclick="toggleChat()">🤖</button>
+
+<!-- AI CHAT PANEL -->
+<div class="ai-input-area" id="aiPanel">
+  <div class="ai-chat-header">
+    <h4>🤖 AI 어시스턴트</h4>
+    <button onclick="toggleChat()" style="background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:18px;">✕</button>
+  </div>
+  <div class="ai-messages" id="aiMessages">
+    <div class="msg msg-ai">안녕하세요! 유튜브 채널 성장을 도와드릴 AI 어시스턴트입니다. 궁금한 점을 물어보세요 😊</div>
+  </div>
+  <div class="ai-input-row">
+    <input class="ai-text-input" id="aiInput" placeholder="ex) 조회수 올리는 방법은?" onkeydown="if(event.key==='Enter') sendMsg()" />
+    <button class="btn btn-primary" onclick="sendMsg()" style="padding: 8px 14px;">전송</button>
+  </div>
+</div>
+
+<script>
+  // Active nav
+  document.querySelector('.nav-item').classList.add('active');
+
+  function setActive(el, title) {
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('pageTitle').textContent = title;
+  }
+
+  // Analyze
+  function analyze() {
+    const url = document.getElementById('channelUrl').value.trim();
+    if (!url) {
+      alert('채널 URL을 입력해주세요!');
+      return;
+    }
+    const btn = event.target;
+    btn.textContent = '⏳ 분석 중...';
+    btn.disabled = true;
+    setTimeout(() => {
+      btn.textContent = '✅ 분석 완료!';
+      setTimeout(() => {
+        btn.textContent = '🔍 분석 시작';
+        btn.disabled = false;
+      }, 2000);
+    }, 2000);
+  }
+
+  // AI Chat
+  let chatOpen = false;
+  function toggleChat() {
+    chatOpen = !chatOpen;
+    document.getElementById('aiPanel').classList.toggle('open', chatOpen);
+    document.getElementById('aiFab').style.display = chatOpen ? 'none' : 'flex';
+  }
+
+  const aiReplies = [
+    '조회수를 높이려면 제목에 검색 키워드를 포함하고, 썸네일 클릭률(CTR)을 높이는 것이 중요합니다!',
+    '알고리즘은 시청 지속률과 클릭률을 가장 중요하게 봅니다. 첫 30초가 핵심이에요.',
+    '업로드 주기를 일정하게 유지하는 것이 구독자 유지에 매우 중요합니다.',
+    '댓글과 좋아요 등 반응률이 높을수록 추천 알고리즘에 유리합니다.',
+    '키워드 분석 탭에서 현재 트렌드 키워드를 확인해 제목에 활용해보세요!',
+  ];
+  let replyIdx = 0;
+
+  function sendMsg() {
+    const input = document.getElementById('aiInput');
+    const msg = input.value.trim();
+    if (!msg) return;
+
+    const msgs = document.getElementById('aiMessages');
+    msgs.innerHTML += `<div class="msg msg-user">${msg}</div>`;
+    input.value = '';
+    msgs.scrollTop = msgs.scrollHeight;
+
+    setTimeout(() => {
+      msgs.innerHTML += `<div class="msg msg-ai">${aiReplies[replyIdx % aiReplies.length]}</div>`;
+      replyIdx++;
+      msgs.scrollTop = msgs.scrollHeight;
+    }, 800);
+  }
+</script>
 </body>
 </html>
