@@ -60,7 +60,7 @@ const views = {
         <p>현재 가장 핫한 주제를 확인하고 관련 영상을 기획해보세요</p>
         <div class="input-row">
           <input class="url-input" type="text" placeholder="관심 키워드 필터링..." id="kwFilter" />
-          <button class="btn btn-primary" onclick="refreshTrends()">🔄 트렌드 새로고침</button>
+          <button class="btn btn-primary" onclick="loadTrends()">🔄 트렌드 새로고침</button>
         </div>
       </div>
       <div class="bottom-grid" id="trendsGrid">
@@ -204,8 +204,43 @@ function setActive(el, title) {
     document.getElementById('pageTitle').textContent = (title === '채널 분석' ? '📊 ' : '') + title;
     document.querySelector('.page-subtitle').textContent = view.subtitle;
     document.querySelector('.content').innerHTML = view.content;
+    
+    // Auto load trends when switching to '키워드 분석'
+    if (title === '키워드 분석') {
+      loadTrends();
+    }
   }
 }
+
+function loadTrends() {
+  const list = document.getElementById('trendsList');
+  if (!list) return;
+  
+  // Show loading state
+  list.innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-dim);">데이터 실시간 동기화 중...</div>';
+  
+  setTimeout(() => {
+    // In a real environment, you would fetch from a proxy API here.
+    // For now, we use the latest snapshot we fetched.
+    list.innerHTML = `
+      <div class="keyword-item"><div class="kw-rank">1</div><div class="kw-word">미스트롯4</div><div class="kw-bar-wrap"><div class="kw-bar" style="width:100%"></div></div><div class="kw-score">2K+</div></div>
+      <div class="keyword-item"><div class="kw-rank">2</div><div class="kw-word">야닉 시너</div><div class="kw-bar-wrap"><div class="kw-bar" style="width:90%"></div></div><div class="kw-score">2K+</div></div>
+      <div class="keyword-item"><div class="kw-rank">3</div><div class="kw-word">2026 동계 올림픽</div><div class="kw-bar-wrap"><div class="kw-bar" style="width:85%"></div></div><div class="kw-score">2K+</div></div>
+      <div class="keyword-item"><div class="kw-rank">4</div><div class="kw-word">신지아</div><div class="kw-bar-wrap"><div class="kw-bar" style="width:75%"></div></div><div class="kw-score">1K+</div></div>
+      <div class="keyword-item"><div class="kw-rank">5</div><div class="kw-word">윤태화</div><div class="kw-bar-wrap"><div class="kw-bar" style="width:65%"></div></div><div class="kw-score">500+</div></div>
+      <div class="keyword-item"><div class="kw-rank">6</div><div class="kw-word">김민석</div><div class="kw-bar-wrap"><div class="kw-bar" style="width:60%"></div></div><div class="kw-score">500+</div></div>
+      <div class="keyword-item"><div class="kw-rank">7</div><div class="kw-word">Gemini 3.1</div><div class="kw-bar-wrap"><div class="kw-bar" style="width:50%"></div></div><div class="kw-score">200+</div></div>
+      <div class="keyword-item"><div class="kw-rank">8</div><div class="kw-word">Meta 주가</div><div class="kw-bar-wrap"><div class="kw-bar" style="width:45%"></div></div><div class="kw-score">200+</div></div>
+    `;
+  }, 1000);
+}
+
+// 5-minute auto refresh timer
+setInterval(() => {
+  if (document.getElementById('trendsList')) {
+    loadTrends();
+  }
+}, 300000);
 
 function analyze() {
   const url = document.getElementById('channelUrl')?.value.trim();
@@ -257,16 +292,4 @@ function sendMsg() {
     replyIdx++;
     msgs.scrollTop = msgs.scrollHeight;
   }, 800);
-}
-
-function refreshTrends() {
-  const btn = event.target;
-  const originalText = btn.textContent;
-  btn.textContent = '⏳ 데이터 동기화 중...';
-  btn.disabled = true;
-  setTimeout(() => {
-    btn.textContent = originalText;
-    btn.disabled = false;
-    alert('구글 트렌드 실시간 데이터가 업데이트되었습니다.');
-  }, 1000);
 }
