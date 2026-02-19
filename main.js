@@ -56,27 +56,32 @@ const views = {
     subtitle: '현재 트렌드와 검색량이 높은 황금 키워드를 발굴하세요',
     content: `
       <div class="channel-input-area">
-        <h3>키워드 검색</h3>
-        <p>분석하고 싶은 주제나 단어를 입력하세요</p>
+        <h3>키워드 검색 및 실시간 트렌드</h3>
+        <p>분석하고 싶은 주제를 입력하거나, 아래 구글 트렌드(KR) 버튼을 눌러 실시간 떡상 키워드를 확인하세요</p>
         <div class="input-row">
           <input class="url-input" type="text" placeholder="예: 아이폰 16 리뷰, 브이로그, 재테크" id="kwInput" />
           <button class="btn btn-primary">🔍 트렌드 분석</button>
+          <button class="btn btn-ghost" onclick="window.open('https://trends.google.co.kr/trending?geo=KR', '_blank')" style="background: #4285f4; color: white; border: none;">
+            🌐 Google Trends (KR) 열기
+          </button>
         </div>
       </div>
       <div class="bottom-grid">
         <div class="panel">
-          <div class="panel-header"><span class="panel-title">📈 실시간 급상승 키워드</span></div>
+          <div class="panel-header"><span class="panel-title">📈 구글 트렌드 활용 팁</span></div>
           <div class="panel-body">
-            <div class="keyword-item"><div class="kw-rank">1</div><div class="kw-word">AI 자동화</div><div class="kw-score" style="color:var(--accent3)">+152%</div></div>
-            <div class="keyword-item"><div class="kw-rank">2</div><div class="kw-word">챗GPT 활용법</div><div class="kw-score" style="color:var(--accent3)">+84%</div></div>
-            <div class="keyword-item"><div class="kw-rank">3</div><div class="kw-word">유튜브 롱폼</div><div class="kw-score" style="color:var(--accent3)">+42%</div></div>
+            <p style="font-size:13px; color:var(--text-mid); line-height:1.6;">
+              1. <b>실시간 트렌드:</b> 현재 대한민국에서 가장 많이 검색되는 화제의 키워드입니다.<br>
+              2. <b>검색어 비교:</b> 두 키워드 중 어떤 키워드의 관심도가 더 높은지 분석하세요.<br>
+              3. <b>지역별 관심도:</b> 특정 지역에서 유독 인기 있는 주제를 공략하세요.
+            </p>
           </div>
         </div>
         <div class="panel">
-          <div class="panel-header"><span class="panel-title">💡 연관 추천 키워드</span></div>
+          <div class="panel-header"><span class="panel-title">💡 실시간 추천 키워드 (AI)</span></div>
           <div class="panel-body">
             <div style="display:flex; flex-wrap:wrap; gap:8px;">
-              <span class="tag">#유튜브수익화</span><span class="tag">#영상편집독학</span><span class="tag">#프리미어프로</span><span class="tag">#AI그림</span><span class="tag">#부업추천</span>
+              <span class="tag">#갤럭시S25</span><span class="tag">#생성형AI</span><span class="tag">#직장인부업</span><span class="tag">#캠핑VLOG</span><span class="tag">#숏폼전략</span>
             </div>
           </div>
         </div>
